@@ -7,4 +7,6 @@ The board game is toroidal, meaning the edges is connected to each other.
 
 There is a fixed size on the board game, which can be changed in the [Variables.py](Variables.py) file. There it is also possible to change the size of each block/cell.
 
-![](example.gif)
+
+
+![](example.gif) ![](example_toroidal.gif)
