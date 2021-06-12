@@ -12,11 +12,19 @@ def update_cells(cells):
     for (x,y), life in np.ndenumerate(cells):
         numbers_of_neighbours = 0
         for neighbour in neighbours:
+            x_ = x
+            y_ = y
             dx = neighbour[0]
             dy = neighbour[1]
-            if (x+dx) < 0 or (y+dy) < 0 or (x+dx) >= round(WINDOW_WIDTH / BLOCK_SIZE) or (y+dy) >= round(WINDOW_HEIGHT / BLOCK_SIZE):
-                continue
-            if cells[x+dx][y+dy] == ALIVE:
+            if (x+dx) < 0:
+                x_ = round(WINDOW_WIDTH / BLOCK_SIZE) - 1
+            if (y+dy) < 0:
+                y_ = round(WINDOW_HEIGHT / BLOCK_SIZE)
+            if (x+dx) >= round(WINDOW_WIDTH / BLOCK_SIZE) - 1:
+                x_ = -1
+            if (y+dy) >= round(WINDOW_HEIGHT / BLOCK_SIZE):
+                y_ = -1
+            if cells[x_+dx][y_+dy] == ALIVE:
                 numbers_of_neighbours += 1
 
         if life == DEAD and numbers_of_neighbours == 3:
@@ -29,6 +37,18 @@ def update_cells(cells):
 
 
     return new_cells
+
+
+def get_mouse_pos():
+    pos = pygame.mouse.get_pos()
+    x = math.floor(pos[0] / BLOCK_SIZE)
+    y = math.floor(pos[1] / BLOCK_SIZE)
+    if x == round(WINDOW_WIDTH / BLOCK_SIZE):
+        x -= 1
+    if y == round(WINDOW_HEIGHT / BLOCK_SIZE):
+        y -= 1
+    return x, y, ALIVE
+
 
 def main():
     print("-------------------- Lauching Game of Life --------------------")
@@ -43,14 +63,8 @@ def main():
     initial_board_done = False
     while not initial_board_done:
         if pygame.mouse.get_pressed()[0]:
-            pos = pygame.mouse.get_pos()
-            x = math.floor(pos[0] / BLOCK_SIZE)
-            y = math.floor(pos[1] / BLOCK_SIZE)
-            if x == round(WINDOW_WIDTH / BLOCK_SIZE):
-                x -= 1
-            if y == round(WINDOW_HEIGHT / BLOCK_SIZE):
-                y -= 1
-            cells[x][y] = ALIVE
+            x, y, life = get_mouse_pos()
+            cells[x][y] = life
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 initial_board_done = True
@@ -63,16 +77,15 @@ def main():
 
     #Running Game of Life
     while True:
-        CLOCK.tick(10)
-        cells = update_cells(cells)
-        draw.draw_board(cells)
-
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 pygame.quit()
                 sys.exit()
-        pygame.display.update()
 
+        cells = update_cells(cells)
+        draw.draw_board(cells)
+        pygame.display.update()
+        CLOCK.tick(10)
 
 if __name__ == "__main__":
     main()
