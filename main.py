@@ -47,7 +47,7 @@ def get_mouse_pos():
         x -= 1
     if y == round(WINDOW_HEIGHT / BLOCK_SIZE):
         y -= 1
-    return x, y, ALIVE
+    return x, y
 
 
 def main():
@@ -63,12 +63,15 @@ def main():
     initial_board_done = False
     while not initial_board_done:
         if pygame.mouse.get_pressed()[0]:
-            x, y, life = get_mouse_pos()
-            cells[x][y] = life
+            x, y = get_mouse_pos()
+            cells[x][y] = ALIVE
+        if pygame.mouse.get_pressed()[2]:
+            x, y = get_mouse_pos()
+            cells[x][y] = DEAD
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 initial_board_done = True
-        draw.draw_board(cells)
+        draw.draw_board(cells, draw_grid=True)
         pygame.display.update()
         CLOCK.tick(1000)
 
